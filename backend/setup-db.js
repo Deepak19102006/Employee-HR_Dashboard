@@ -5,14 +5,16 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Find server directory whether run from root or server
-const serverDir = fs.existsSync(path.join(__dirname, 'src'))
+// Find backend directory whether run from root or backend
+const backendDir = fs.existsSync(path.join(__dirname, 'src'))
   ? __dirname
-  : path.join(__dirname, 'server');
+  : fs.existsSync(path.join(__dirname, 'backend'))
+  ? path.join(__dirname, 'backend')
+  : __dirname;
 
-// Dynamically import pg and dotenv from server/node_modules
-const pgPath = path.join(serverDir, 'node_modules', 'pg', 'lib', 'index.js');
-const dotenvPath = path.join(serverDir, 'node_modules', 'dotenv', 'lib', 'main.js');
+// Dynamically import pg and dotenv from backend/node_modules
+const pgPath = path.join(backendDir, 'node_modules', 'pg', 'lib', 'index.js');
+const dotenvPath = path.join(backendDir, 'node_modules', 'dotenv', 'lib', 'main.js');
 
 let pg, dotenv;
 try {
@@ -23,7 +25,7 @@ try {
   dotenv = await import('dotenv');
 }
 
-dotenv.config({ path: path.join(serverDir, '.env') });
+dotenv.config({ path: path.join(backendDir, '.env') });
 
 const { Client } = pg.default || pg;
 
@@ -79,7 +81,7 @@ async function setup() {
     await appClient.connect();
     console.log(`✔ Connected to database "${dbName}". Applying schema.sql...`);
 
-    const schemaPath = path.join(serverDir, 'src', 'db', 'schema.sql');
+    const schemaPath = path.join(backendDir, 'src', 'db', 'schema.sql');
     const schemaSql = fs.readFileSync(schemaPath, 'utf-8');
     await appClient.query(schemaSql);
     console.log(`✔ All tables, primary keys, foreign keys, and indexes applied successfully!`);
@@ -87,22 +89,22 @@ async function setup() {
     await appClient.end();
 
     // Update .env file with the password
-    const envPath = path.join(serverDir, '.env');
+    const envPath = path.join(backendDir, '.env');
     if (fs.existsSync(envPath)) {
       let envContent = fs.readFileSync(envPath, 'utf-8');
       envContent = envContent.replace(/DB_PASSWORD=.*/g, `DB_PASSWORD=${dbPassword}`);
       fs.writeFileSync(envPath, envContent, 'utf-8');
-      console.log(`✔ Updated server/.env with your PostgreSQL password.`);
+      console.log(`✔ Updated backend/.env with your PostgreSQL password.`);
     }
 
     console.log(`\n🎉 PostgreSQL is 100% configured and ready!`);
     console.log(`Tables created: users, salaries, attendance, leaves, payrolls.`);
-    console.log(`Restart your backend: npm run server\n`);
+    console.log(`Start your backend: npm run backend\n`);
   } catch (err) {
     console.error(`\n❌ Error setting up PostgreSQL:`, err.message);
     if (err.message.includes('password authentication failed')) {
       console.log(`\n👉 Make sure you provided the correct password:`);
-      console.log(`   node server/setup-db.js <your_actual_postgres_password>\n`);
+      console.log(`   node backend/setup-db.js <your_actual_postgres_password>\n`);
     }
     process.exit(1);
   }

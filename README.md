@@ -4,6 +4,43 @@ A modern, responsive, enterprise-grade **Human Resource Management System (HRMS)
 
 ---
 
+## 📁 Project Architecture & Clean Folder Separation
+
+The project is structured into clear, decoupled folders:
+
+```
+Full_stack_project/
+├── frontend/                # React 18 + Vite + Tailwind CSS (SPA UI)
+│   ├── src/
+│   │   ├── api/            # API client wrapper
+│   │   ├── context/        # Auth context & session state
+│   │   ├── components/     # Modals, Navbar, Sidebar, StatCards, Payslip
+│   │   └── pages/
+│   │       ├── Login.jsx
+│   │       ├── hr/         # HR Dashboard, Employees, Attendance, Leaves, Payroll
+│   │       └── employee/   # Employee Dashboard, Profile, Attendance, Leaves, Payslips
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
+│
+├── backend/                 # Node.js + Express REST API & PostgreSQL Layer
+│   ├── src/
+│   │   ├── db/             # pg Pool, PostgreSQL schema.sql, initial seed
+│   │   ├── middleware/     # JWT authentication & role-based access control
+│   │   └── routes/         # auth, employees, attendance, leaves, payroll, dashboard
+│   ├── .env                # Database credentials & port configuration
+│   ├── setup-db.js         # Automated database setup script
+│   ├── view-db.js          # Interactive database tables viewer
+│   └── package.json
+│
+├── setup-db.js              # Root wrapper for database setup
+├── test-server.js           # Automated backend test suite
+├── package.json             # Root runner (starts frontend & backend)
+└── .gitignore               # Multi-environment gitignore
+```
+
+---
+
 ## 🌟 Key Features
 
 ### 👔 HR Administration Portal
@@ -29,7 +66,7 @@ A modern, responsive, enterprise-grade **Human Resource Management System (HRMS)
 
 ### 👤 Employee Self-Service Portal
 * **First-Time Registration & Password Setup**:
-  - If HR adds an employee to the directory, the employee can visit the portal, click **"First Time? Set Password"**, enter their registered work email, and set their personal password.
+  - When HR adds an employee to the directory, the employee can visit the portal, click **"First Time? Set Password"**, enter their registered work email, and set their personal password.
   - Future logins use that newly created password.
   - Unauthorized emails cannot register unless HR has explicitly added them first.
 * **Strictly View-Only Personal Details**: View personal profile, contact information, department, job designation, joining date, and detailed breakdown of monthly compensation.
@@ -56,56 +93,53 @@ A modern, responsive, enterprise-grade **Human Resource Management System (HRMS)
 | **Employee 2** | `john@company.com` | `emp123` | Product Designer, clock in/out, view profile & leaves |
 | **Employee 3** | `priya@company.com` | `emp123` | Marketing Manager, clock in/out, view profile & leaves |
 
-> 💡 **Quick 1-Click Login:** On the login screen, convenient demo shortcut buttons automatically fill and log you into the portal with 1 click.
+---
+
+## 🚀 How to Run
+
+### Option A: From the Root Directory (Quickest)
+
+1. **Start the Backend API Server**:
+   ```bash
+   npm run backend
+   ```
+   Backend will be running at: **`http://localhost:5000`**
+
+2. **Start the Frontend Application** (in a second terminal):
+   ```bash
+   npm run frontend
+   ```
+   Open your browser at: **`http://localhost:5173`**
 
 ---
 
-## 🛠 Tech Stack
+### Option B: Running from Each Folder Independently
 
-* **Frontend**: React 18, Vite, Tailwind CSS, Lucide Icons, Date utilities.
-* **Backend**: Node.js, Express, JWT (`jsonwebtoken`), Password Hashing (`bcryptjs`), CORS.
-* **Database**: PostgreSQL 16 (Native `pg` Pool with auto-schema bootstrap and pre-seeded mock records).
+1. **Backend**:
+   ```bash
+   cd backend
+   npm run dev
+   ```
 
----
-
-## 🚀 How to Run the Application
-
-### 1. Configure PostgreSQL (Optional)
-The backend is already configured to automatically connect to your PostgreSQL instance at `127.0.0.1:5432`.
-Open [`server/.env`](file:///c:/Users/Deepak%20B/Desktop/Full_stack_project/server/.env) and set your PostgreSQL password:
-```env
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your_password_here
-DB_NAME=hr_dashboard_db
-```
-To test and auto-create the database:
-```bash
-node server/setup-db.js <your_password>
-```
-*(If the password is not yet configured, the application automatically launches in High-Performance Mode with pre-seeded data so you can test immediately without any blocking errors).*
-
-### 2. Start the Backend API Server
-```bash
-cd server
-npm run dev
-```
-Backend API will start at: **`http://localhost:5000`**
-
-### 3. Start the React Frontend Application
-In a new terminal window:
-```bash
-cd client
-npm run dev
-```
-Open your browser at: **`http://localhost:5173`**
+2. **Frontend**:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
 
 ---
 
-## 🧪 Testing the API
-To run the automated backend test suite covering authentication, HR stats, attendance clock-in, and payroll calculation:
-```bash
-npm run test:api
-```
+## 🗄️ Database Utilities
 
+* **Automated Database Setup**:
+  ```bash
+  node setup-db.js <your_postgres_password>
+  ```
+* **View Database Records in Terminal**:
+  ```bash
+  npm run db:view
+  ```
+* **Run Automated API Tests**:
+  ```bash
+  npm run test:api
+  ```

@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 
-const server = spawn('node', ['src/index.js'], { cwd: 'server', stdio: 'pipe' });
+const server = spawn('node', ['src/index.js'], { cwd: 'backend', stdio: 'pipe' });
 
 server.stdout.on('data', (d) => process.stdout.write('[Server] ' + d));
 server.stderr.on('data', (d) => process.stderr.write('[Server Error] ' + d));
