@@ -1,0 +1,18 @@
+{
+  "name": "full-stack-hr-employee-dashboard",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "db:setup": "node server/setup-db.js",
+    "db:view": "node server/view-db.js",
+    "test:api": "node test-server.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "pg": "^8.23.1"
+  }
+}
